@@ -1,0 +1,103 @@
+extends ./layout.jade
+
+block content
+  input.csrf(type="hidden", value=csrfToken)
+  input.username(type="hidden", value=user.name)
+
+  .row
+    .col-sm-12.underbar
+      if forUser
+        a.btn.btn-info.pull-right(href="/logout") Log Out
+      else
+        a.btn.btn-primary.pull-right(href="/profile") Log In
+      h2
+        a(href="/feed") 1batch
+        small &nbsp;an app for sharing 8 photos.
+  .row
+    .col-sm-12.col-md-6
+      h1
+        a(href="/profile/#{user.name}") #{user.name}
+      h4 posted #{posted}
+      if forUser
+        if forUser.name !== user.name
+          if following
+            button.btn.btn-danger.follow Unfollow
+          else
+            button.btn.btn-success.follow Follow
+
+  if image.hidden
+    h1
+      span You hid this image.
+      small &nbsp;You can un-hide or delete it.
+      br
+    .row
+      .col-sm-6
+        form.inline(action="/hide", method="POST")
+          input(type="hidden", name="_csrf", value="#{csrfToken}")
+          input(type="hidden", name="id", value="#{image._id}")
+          input(type="hidden", name="makeHide", value="false")
+          button.btn.btn-success Unhide
+      .col-sm-6
+        form.inline(action="/delete", method="POST")
+          input(type="hidden", name="_csrf", value="#{csrfToken}")
+          input(type="hidden", name="id", value="#{image._id}")
+          button.btn.btn-danger Completely Delete
+          br
+          br
+
+  .row
+    .col-sm-12.bigimagecontainer
+      hr
+      img.bigimage(src=image.src.main, srcset="#{image.src.main} 1x, #{image.src.retina} 2x")
+
+  if forUser
+    if forUser.name == user.name
+      .row
+        .col-sm-6
+          if !image.hidden
+            form.inline(action="/hide", method="POST")
+              input(type="hidden", name="_csrf", value="#{csrfToken}")
+              input(type="hidden", name="id", value="#{image._id}")
+              input(type="hidden", name="makeHide", value="true")
+              button.btn.btn-warning Hide / Remove
+              br
+              br
+
+    if canComment
+      .row
+        .col-sm-6
+          form.well(action="/comment", method="POST")
+            input(type="hidden", name="_csrf", value="#{csrfToken}")
+            input(type="hidden", name="id", value="#{image._id}")
+            textarea.form-control(name="text")
+            button.btn.btn-primary.pull-right.commenter Post
+            .clearfix
+
+  .row
+    .col-sm-6.comments
+      table.table.table-striped
+        for comment in comments
+          tr
+            if comment.user === user.name
+              th
+                a(href="/profile/#{comment.user}")
+                  span= comment.user
+                  span &nbsp(poster)
+              td
+                strong= comment.text
+            else
+              td
+                a(href="/profile/#{comment.user}")= comment.user
+              td
+                p= comment.text
+                if forUser && forUser.name === user.name
+                  td
+                    form.inline.pull-right(action="/block", method="POST")
+                      input(type="hidden", name="_csrf", value="#{csrfToken}")
+                      input(type="hidden", name="banuser", value="#{comment.user}")
+                      input(type="hidden", name="id", value="#{image._id}")
+                      button.btn.btn-danger.btn-xs Block
+
+block scripts
+  script(type="text/javascript", src="/lib/jquery-1.11.3.min.js")
+  script(type="text/javascript", src="/follow-button.js")

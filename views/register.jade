@@ -1,0 +1,34 @@
+extends ./layout.jade
+
+block content
+  .row
+    .col-sm-12
+      h1
+        span 1batch&nbsp;
+        small is an app for sharing 8 photos.
+  if forUser
+    .row
+      .col-sm-12.col-md-6
+        p Hey, you're already logged in.
+        br
+        a(href="/profile")
+          button.btn.btn-primary Your profile
+        br
+        br
+        a(href="/logout")
+          button.btn.btn-inverse Log Out
+  else
+    .row
+      .col-sm-12.col-md-6
+        form.well(action="/register", method="POST")
+          p Let's sign you up.
+          label Username
+          input(type="text", name="username")
+          label Password
+          input(type="password", name="password")
+          br
+          input(type="hidden", name="_csrf", value="#{csrfToken}")
+          button.btn.btn-success Register New User
+        .well
+          span Already have an account?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          a(href="/login").btn.btn-info Log In

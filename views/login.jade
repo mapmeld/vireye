@@ -1,0 +1,43 @@
+extends ./layout.jade
+
+block content
+  .row
+    .col-sm-12
+      h1
+        span 1batch&nbsp;
+        small is an app for sharing 8 photos.
+  if forUser
+    .row
+      .col-sm-12.col-md-6
+        p Hey, you're already logged in.
+        br
+        a(href="/profile")
+          button.btn.btn-primary Your profile
+        br
+        br
+        a(href="/logout")
+          button.btn.btn-inverse Log Out
+  else
+    .row
+      .col-sm-12.col-md-6
+        if newuser
+          p You created your account! Now enter your password:
+        else
+          p Choose a method to sign in:
+          if googly
+            .well
+              a(href="/auth/google")
+                img(src="/images/btn_google_signin_dark_normal_web.png", alt="Sign in with Google")
+                  
+          .well
+            span Or just username / password:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            a(href="/register").btn.btn-primary Register
+        form.well(action="/login", method="POST")
+          h4 1batch username / password:
+          label Username
+          input(type="text", name="username", value=newuser)
+          label Password
+          input(type="password", name="password")
+          br
+          input(type="hidden", name="_csrf", value=csrfToken)
+          button.btn.btn-primary Log In

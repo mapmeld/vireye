@@ -1,0 +1,169 @@
+html, body {
+  font-family: 'Biryani', sans-serif;
+}
+
+.btn {
+  padding-bottom: 4px;
+}
+
+.navbar {
+  background: #fff;
+  border-bottom: 1px solid #000;
+}
+
+.navbar h1 {
+  margin-bottom: 0;
+}
+
+.main {
+  margin-top: 100px;
+  margin-bottom: 60px;
+}
+
+.row {
+  margin-bottom: 18px;
+}
+
+.col-sm-12.col-md-6 {
+  margin-bottom: 18px;
+}
+
+.pcon {
+  border: 3px solid #000;
+  background: #fff;
+  padding: 6px;
+  width: 100%;
+  display: block;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.pcon img {
+  background: #444;
+  width: 100%;
+}
+
+.homephotos {
+  margin-top: 50px;
+}
+
+@media (min-width: 768px) {
+  .homephotos > div {
+    height: 270px;
+  }
+}
+
+@media (min-width: 992px) {
+  .homephotos > div {
+    height: 350px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .homephotos > div {
+    height: auto;
+  }
+}
+
+
+.profilephotos .pcon {
+  cursor: pointer;
+}
+
+.profilephotos .pcon:hover, .profilephotos .pcon:active {
+  background: #ccf;
+}
+
+.bigimage {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #000;
+}
+
+.comment {
+  padding: 12px;
+  background: #fff;
+  box-shadow: 2px 2px 2px #444;
+}
+
+.comment.op {
+  border: 1px solid blue;
+}
+
+form input, form label {
+  display: block;
+}
+
+form.inline {
+  display: inline;
+}
+
+a button {
+  color: #000;
+}
+
+a .btn-inverse {
+  color: #fff;
+}
+
+a button:hover {
+  text-transform: none;
+}
+
+.savedphotos .pcon {
+  border: 1px solid #000;
+  border-radius: 18px;
+}
+
+.savedphotos .pcon img {
+  border-radius: 18px;
+}
+
+.pcon.picked, .pcon.maybe-pick {
+  border: 1px solid blue;
+}
+
+.pcon.picked .pick, .pcon.maybe-pick .pick {
+  display: block;
+}
+
+.savedphotos .pick {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.pcon .pick button {
+  background: darkgreen;
+  color: #fff;
+  padding: 10px;
+  border-radius: 30px;
+}
+
+.pcon.picked .pick button {
+  background: red;
+}
+
+h1 a, h2 a, h1 a:hover, h2 a:hover {
+  color: #000;
+}
+
+.btn-info.pull-right {
+  margin-top: 20px;
+}
+
+.underbar {
+  border-bottom: 1px solid #000;
+}
+
+img.hidemark {
+  border: #f00;
+  opacity: 0.5;
+}
+
+button.commenter {
+  margin-top: 10px;
+}

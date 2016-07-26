@@ -1,0 +1,104 @@
+extends ./layout.jade
+
+block content
+  input.csrf(type="hidden", value=csrfToken)
+  input.username(type="hidden", value=user.name)
+
+  .row
+    .col-sm-12.underbar
+      if forUser
+        a.btn.btn-info.pull-right(href="/logout") Log Out
+      else
+        a.btn.btn-primary.pull-right(href="/profile") Log In
+      h2
+        a(href="/feed") 1batch
+        small &nbsp;an app for sharing 8 photos
+  .row
+    .col-sm-12.col-md-6
+      h1= user.name
+      if posted
+        h4 posted #{posted}
+      else
+        if forUser && user.name == forUser.name
+          h4 You haven't posted yet!
+        else
+          h4 hasn't posted yet!
+      if forUser
+        if forUser.name !== user.name
+          if following
+            button.btn.btn-danger.follow Unfollow
+          else
+            button.btn.btn-success.follow Follow
+  if posted
+    .row.profilephotos
+      for index in [0, 1, 2, 3]
+        if index < images.length
+          .col-sm-6.col-lg-3
+            a.pcon(href="/#{user.name}/photo/#{images[index]._id}")
+              img(src=images[index].src.main, srcset="#{images[index].src.main} 1x, #{images[index].src.retina} 2x", class="#{images[index].hidden ? 'hidemark' : ''}")
+    .row.profilephotos
+      for index in [4, 5, 6, 7]
+        if index < images.length
+          .col-sm-6.col-lg-3
+            a.pcon(href="/#{user.name}/photo/#{images[index]._id}")
+              img(src=images[index].src.main, srcset="#{images[index].src.main} 1x, #{images[index].src.retina} 2x", class="#{images[index].hidden ? 'hidden' : ''}")
+  if (!posted || user.republish) && forUser && user.name == forUser.name
+    .row
+      .col-sm-12.col-md-6
+        form.well(action="/upload?_csrf=#{csrfToken}", method="POST", enctype="multipart/form-data")
+          label Upload a photo that you might use. You can change your mind before posting.
+          hr
+          input(type="file", name="upload")
+          button.btn.btn-success.pull-right Upload
+          .clearfix
+    .row
+      .col-sm-12.savedphotos
+        if saved.length
+          h4
+            span Stored images (
+            span.pickcount
+            span &nbsp;/ 8 picked)
+            small &nbsp;&nbsp;&nbsp;double-tap to pick
+          for image in saved
+            .col-sm-6.col-lg-4
+              a.pcon(href="javascript:void(0);", class="#{image.picked ? 'picked' : ''}")
+                img(id=image._id, src=image.src.main, srcset="#{image.src.main} 1x, #{image.src.retina} 2x")
+                span.pick
+                  if !image.picked
+                    button Pick &check;
+                  else
+                    button Remove x
+        else
+          p No images uploaded yet...
+  if saved.length
+    .row
+      .col-sm-12.postnow.well
+        p Once you've picked 1 to 8 photos that you really like, hit publish!
+        ul
+          li Your photos will be online for six months
+          li You can always hide or delete a photo
+          li You have one hour to redo if you change your mind
+        br
+        button.btn.btn-success
+          span Post Picked Photos (
+          span.pickcount
+          span )
+  else if forUser && forUser.name === user.name
+    if (posted && ((posted.indexOf('ms') > -1) || (posted.indexOf('minute') > -1) || (posted.indexOf('second') > -1)))
+      .row
+        .col-sm-12.postnow.well
+          ul
+            li For one hour you have the option to unpublish / redo your post
+            li You can always hide or delete a photo
+          br
+          button.btn.btn-danger.unpublish Unpublish Photos
+    if posted
+      .row
+        .col-sm-12.well
+          p Click a photo to go to its photo page. You can leave comments, hide it, or remove it.
+
+block scripts
+  script(type="text/javascript", src="/lib/jquery-1.11.3.min.js")
+  script(type="text/javascript", src="/follow-button.js")
+  if forUser && user.name == forUser.name
+    script(type="text/javascript", src="/image-select.js")
