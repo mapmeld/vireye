@@ -39,7 +39,7 @@ var setupAuth = function (app, router) {
       {
         clientID: process.env.GOOGLE_CONSUMER_KEY,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: 'https://1batch.co/profile?justLoggedIn=true',
+        callbackURL: 'http://vireye.herokuapp.com/profile?justLoggedIn=true',
         passReqToCallback: true
       },
       function(request, accessToken, refreshToken, profile, done) {

@@ -1,7 +1,7 @@
 {
-  "name": "1batch",
+  "name": "vireye",
   "version": "1.0.0",
-  "description": "Photo-sharing app",
+  "description": "bio research network",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon --exec npm run -s serve",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mapmeld/1batch.git"
+    "url": "git+https://github.com/mapmeld/vireye.git"
   },
   "author": "Nick Doiron <ndoiron@mapmeld.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mapmeld/1batch/issues"
+    "url": "https://github.com/mapmeld/vireye/issues"
   },
-  "homepage": "https://github.com/mapmeld/1batch#readme",
+  "homepage": "https://github.com/mapmeld/vireye#readme",
   "dependencies": {
     "async-busboy": "0.0.4",
     "aws-sdk": "^2.2.28",

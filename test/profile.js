@@ -16,11 +16,11 @@ describe('profile page visibility', function() {
   });
 
   it('doesn\'t show e-mail profiles', function(done) {
-    createUser('nick@1batch.co', function(err) {
+    createUser('nick@example.com', function(err) {
       if (err) {
         return wrapup(done, err);
       }
-      requestProfile('nick@1batch.co', done, function(res) {
+      requestProfile('nick@example.com', done, function(res) {
         assert.include(res.text, 'can\'t find that user');
         wrapup(done);
       });
