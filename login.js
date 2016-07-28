@@ -7,6 +7,12 @@ const crypto = require('crypto');
 const User = require('./models/user.js');
 const printError = require('./common.js').error;
 
+const neo4j = require('neo4j');
+const graphdb = new neo4j.GraphDatabase(process.env['GRAPHENEDB_URL'] || {
+  url: 'http://localhost:7474',
+  auth: {username: 'neo4j', password: 'swift'}
+});
+
 var middleware = function(ctx, next) {
   if (process.env.GOOGLE_CONSUMER_KEY && process.env.GOOGLE_CLIENT_SECRET) {
     return passport.authenticate('google', { scope: ['email'], failureRedirect: '/login' });
@@ -135,6 +141,15 @@ var setupAuth = function (app, router) {
       republish: false
     });
     u = await u.save();
+
+    graphdb.cypher({
+      query: 'CREATE (:User { name:{name},mongoid:{mongoid} })',
+      params: {
+        mongoid: u._id,
+        name: username
+      }
+    }, console.log);
+
     ctx.redirect('/login?user=' + username);
   }
 
