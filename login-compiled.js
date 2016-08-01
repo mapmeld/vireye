@@ -11,10 +11,18 @@ const crypto = require('crypto');
 const User = require('./models/user.js');
 const printError = require('./common-compiled.js').error;
 
-const neo4j = require('neo4j');
-const graphdb = new neo4j.GraphDatabase(process.env['GRAPHENEDB_URL'] || {
-  url: 'http://localhost:7474',
-  auth: { username: 'neo4j', password: 'swift' }
+const graphdb = require('neo4j-simple')(process.env['GRAPHENEDB_URL'], {
+  idName: 'id'
+});
+
+const userNode = graphdb.defineNode({
+  label: ['User'],
+  schemas: {
+    'saveWithName': {
+      'name': graphdb.Joi.string().required(),
+      'mongoid': graphdb.Joi.string().required()
+    }
+  }
 });
 
 var middleware = function middleware(ctx, next) {
@@ -57,13 +65,11 @@ var setupAuth = function setupAuth(app, router) {
       });
       u = yield u.save();
 
-      graphdb.cypher({
-        query: 'CREATE (:User { name:{name},mongoid:{mongoid} })',
-        params: {
-          mongoid: u._id,
-          name: username
-        }
-      }, console.log);
+      var graphu = new userNode({
+        name: username,
+        mongoid: u._id
+      });
+      graphu = yield grapy.save({ operation: 'saveWithName' });
 
       ctx.redirect('/login?user=' + username);
     });
@@ -131,7 +137,7 @@ var setupAuth = function setupAuth(app, router) {
   });
 
   function getLogin(ctx, next) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     ctx.render('login', {
       forUser: requser,
       csrfToken: ctx.csrf,
@@ -141,7 +147,7 @@ var setupAuth = function setupAuth(app, router) {
   }
 
   function getRegister(ctx, next) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     if (requser) {
       return ctx.redirect('/profile');
     }
@@ -151,7 +157,7 @@ var setupAuth = function setupAuth(app, router) {
   }
 
   function bye(ctx, next) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     if (requser) {
       ctx.redirect('/logout');
     } else {

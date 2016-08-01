@@ -39,6 +39,7 @@
     "multer": "^1.1.0",
     "multer-s3": "^1.4.1",
     "neo4j": "^2.0.0-RC2",
+    "neo4j-simple": "^0.8.0",
     "passport-facebook": "^2.0.0",
     "passport-google-oauth": "^0.2.0",
     "passport-local": "^1.0.0",
