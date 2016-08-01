@@ -40,7 +40,7 @@ module.exports = function (app, router) {
     }
 
     router.post('/upload', async function (ctx, next) {
-      var requser = (ctx.req.user || ctx.request.user);
+      var requser = ctx.state.user;
       if (!requser) {
         return ctx.redirect('/login');
       }

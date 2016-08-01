@@ -69,7 +69,7 @@ var setupAuth = function setupAuth(app, router) {
         name: username,
         mongoid: u._id
       });
-      graphu = yield grapy.save({ operation: 'saveWithName' });
+      graphu = yield graphu.save();
 
       ctx.redirect('/login?user=' + username);
     });

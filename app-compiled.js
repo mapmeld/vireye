@@ -15,7 +15,7 @@ let home = (() => {
 
 let myProfile = (() => {
   var _ref2 = _asyncToGenerator(function* (ctx, next) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     if (!requser.name || requser.name.indexOf('@') > -1) {
       return ctx.redirect('/changename');
     }
@@ -68,7 +68,7 @@ let myProfile = (() => {
 
 let postChangeName = (() => {
   var _ref3 = _asyncToGenerator(function* (ctx) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     if (requser.name && requser.name.indexOf('@') > -1) {
       return ctx.redirect('/profile');
     }
@@ -97,7 +97,7 @@ let postChangeName = (() => {
 
 let feed = (() => {
   var _ref4 = _asyncToGenerator(function* (ctx) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     if (requser) {
       var follows = yield Follow.find({ start_user_id: requser.name, blocked: false }).exec();
       var permDate = new Date(new Date() - 60 * 60 * 1000);
@@ -123,7 +123,7 @@ let feed = (() => {
 
 let theirProfile = (() => {
   var _ref5 = _asyncToGenerator(function* (ctx) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     if (requser && ctx.params.username.toLowerCase() === requser.name) {
       // redirect to your own profile
       return ctx.redirect('/profile');
@@ -160,7 +160,7 @@ let theirProfile = (() => {
 
 let photo = (() => {
   var _ref6 = _asyncToGenerator(function* (ctx) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     var user = yield User.findOne({ name: ctx.params.username.toLowerCase() }).exec();
     if (!user || !user.posted) {
       return printNoExist(ctx);
@@ -201,7 +201,7 @@ let photo = (() => {
 
 let follow = (() => {
   var _ref7 = _asyncToGenerator(function* (ctx) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     if (requser.name === ctx.params.end_user) {
       return printError('you can\'t follow yourself', ctx);
     }
@@ -242,7 +242,7 @@ let follow = (() => {
 
 let block = (() => {
   var _ref8 = _asyncToGenerator(function* (ctx) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     if (requser.name === ctx.request.body.banuser) {
       return printError('you can\'t block yourself', ctx);
     }
@@ -286,7 +286,7 @@ let block = (() => {
 
 let pick = (() => {
   var _ref9 = _asyncToGenerator(function* (ctx) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     if (requser.posted) {
       // would immediately publish, and we don't allow that
       return printError('you already posted', ctx);
@@ -305,7 +305,7 @@ let pick = (() => {
 
 let postHide = (() => {
   var _ref10 = _asyncToGenerator(function* (ctx) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     var imgcount = yield Image.update({ _id: ctx.request.body.id, user_id: requser.name }, { hidden: ctx.request.body.makeHide === 'true' }).exec();
     if (!imgcount) {
       return printError('that isn\'t your image', ctx);
@@ -324,7 +324,7 @@ let postHide = (() => {
 
 let makedelete = (() => {
   var _ref11 = _asyncToGenerator(function* (ctx) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     yield Image.remove({ _id: ctx.request.body.id, user_id: requser.name }).exec();
     ctx.redirect('/hide');
   });
@@ -339,7 +339,7 @@ let makedelete = (() => {
 
 let publish = (() => {
   var _ref12 = _asyncToGenerator(function* (ctx) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     if (ctx.request.body.makePublish === 'true') {
       // publish
       if (requser.posted) {
@@ -381,7 +381,7 @@ let publish = (() => {
 
 let comment = (() => {
   var _ref13 = _asyncToGenerator(function* (ctx) {
-    var requser = ctx.req.user || ctx.request.user;
+    var requser = ctx.state.user;
     var img = yield Image.findById(ctx.request.body.id).exec();
     if (!img || img.hidden || !img.published) {
       return printNoExist(err, ctx);
@@ -419,7 +419,7 @@ const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const convert = require('koa-convert');
 const session = require('koa-generic-session');
-const MongoStore = require('koa-generic-session-mongo');
+const MongooseStore = require('koa-session-mongoose');
 const jade = require('koa-jade-render');
 const logger = require('koa-logger');
 const router = require('koa-router')();
@@ -430,7 +430,6 @@ const kstatic = require('koa-static');
 
 const User = require('./models/user.js');
 const Image = require('./models/image.js');
-const Follow = require('./models/following.js');
 
 var setupAuth = require('./login-compiled.js').setupAuth;
 var middleware = require('./login-compiled.js').middleware;
@@ -459,7 +458,7 @@ app.use(compression());
 
 app.keys = ['wkpow3jocijoid3jioj3', 'cekopjpdjjo3jcjio3jc'];
 app.use(convert(session({
-  store: new MongoStore()
+  store: new MongooseStore()
 })));
 
 app.use(logger());
@@ -482,7 +481,7 @@ setupAuth(app, router);
 setupUploads(app, router);
 
 function changeName(ctx) {
-  var requser = ctx.req.user || ctx.request.user;
+  var requser = ctx.state.user;
   if (requser.name && requser.name.indexOf('@') === -1) {
     return ctx.redirect('/profile');
   }
@@ -501,4 +500,3 @@ app.use(router.routes()).use(router.allowedMethods());
 app.listen(process.env.PORT || 8080);
 
 module.exports = app;
-

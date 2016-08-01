@@ -154,7 +154,7 @@ var setupAuth = function (app, router) {
       name: username,
       mongoid: u._id
     });
-    graphu = await grapy.save({ operation: 'saveWithName' });
+    graphu = await graphu.save();
 
     ctx.redirect('/login?user=' + username);
   }
