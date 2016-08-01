@@ -30,6 +30,7 @@ var following = require('./common.js').following;
 var cleanDate = require('./common.js').cleanDate;
 
 console.log('Connecting to MongoDB (required)');
+mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGODB_URI || 'localhost');
 mongoose.connection.on("error", function(err) {
   console.log(err);

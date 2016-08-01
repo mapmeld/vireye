@@ -443,6 +443,7 @@ var following = require('./common-compiled.js').following;
 var cleanDate = require('./common-compiled.js').cleanDate;
 
 console.log('Connecting to MongoDB (required)');
+mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGODB_URI || 'localhost');
 mongoose.connection.on("error", function (err) {
   console.log(err);
