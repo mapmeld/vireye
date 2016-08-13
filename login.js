@@ -6,20 +6,7 @@ const crypto = require('crypto');
 
 const User = require('./models/user.js');
 const printError = require('./common.js').error;
-
-const graphdb = require('neo4j-simple')(process.env['GRAPHENEDB_URL'], {
-  idName: 'id'
-});
-
-const userNode = graphdb.defineNode({
-  label: ['User'],
-  schemas: {
-    'saveWithName': {
-      'name': graphdb.Joi.string().required(),
-      'mongoid': graphdb.Joi.string().required()
-    }
-  }
-});
+const graphUser = require('./models/graph/user.js');
 
 var middleware = function(ctx, next) {
   if (process.env.GOOGLE_CONSUMER_KEY && process.env.GOOGLE_CLIENT_SECRET) {
@@ -150,11 +137,12 @@ var setupAuth = function (app, router) {
     });
     u = await u.save();
 
-    var graphu = new userNode({
+    var graphu = new graphUser({
       name: username,
       mongoid: u._id
     });
-    graphu = await graphu.save();
+    var neonode = await graphu.save();
+    // { id: '____' }
 
     ctx.redirect('/login?user=' + username);
   }
