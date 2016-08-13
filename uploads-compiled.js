@@ -13,7 +13,7 @@ module.exports = function (app, router) {
     /*
         const multer = require('multer');
         const ms3 = require('multer-s3');
-    
+
         upload = multer({
           storage: ms3({
             dirname: 'maps',
@@ -26,7 +26,7 @@ module.exports = function (app, router) {
             }
           })
         });
-    
+
         app.post('/upload', upload.single('upload'), function (req, res) {
           res.render('index');
         });
@@ -86,4 +86,3 @@ module.exports = function (app, router) {
       })());
     }
 };
-

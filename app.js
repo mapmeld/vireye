@@ -125,7 +125,7 @@ async function myProfile (ctx, next) {
   });
 
   ctx.render('profile', {
-    user: requser,
+    profile: requser,
     images: images,
     saved: saved,
     posted: cleanDate(requser.posted),
@@ -202,7 +202,7 @@ async function theirProfile (ctx) {
   var images = await Image.find({ published: true, hidden: false, user_id: user.name }).select('_id src').exec();
   images = images.map(responsiveImg);
   ctx.render('profile', {
-    user: user,
+    profile: user,
     images: images,
     saved: [],
     posted: cleanDate(user.posted),
@@ -234,7 +234,7 @@ async function photo (ctx) {
   var comments = image.comments || [];
   image = responsiveImg(image, true);
   ctx.render('image', {
-    user: user,
+    profile: user,
     image: image,
     comments: comments,
     posted: cleanDate(user.posted),

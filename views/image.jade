@@ -2,7 +2,7 @@ extends ./layout.jade
 
 block content
   input.csrf(type="hidden", value=csrfToken)
-  input.username(type="hidden", value=user.name)
+  input.username(type="hidden", value=profile.name)
 
   .row
     .col-sm-12.underbar
@@ -16,10 +16,10 @@ block content
   .row
     .col-sm-12.col-md-6
       h1
-        a(href="/profile/#{user.name}") #{user.name}
+        a(href="/profile/#{profile.name}") #{profile.name}
       h4 posted #{posted}
       if forUser
-        if forUser.name !== user.name
+        if forUser.name !== profile.name
           if following
             button.btn.btn-danger.follow Unfollow
           else
@@ -51,7 +51,7 @@ block content
       img.bigimage(src=image.src.main, srcset="#{image.src.main} 1x, #{image.src.retina} 2x")
 
   if forUser
-    if forUser.name == user.name
+    if forUser.name == profile.name
       .row
         .col-sm-6
           if !image.hidden
@@ -78,7 +78,7 @@ block content
       table.table.table-striped
         for comment in comments
           tr
-            if comment.user === user.name
+            if comment.user === profile.name
               th
                 a(href="/profile/#{comment.user}")
                   span= comment.user
@@ -90,7 +90,7 @@ block content
                 a(href="/profile/#{comment.user}")= comment.user
               td
                 p= comment.text
-                if forUser && forUser.name === user.name
+                if forUser && forUser.name === profile.name
                   td
                     form.inline.pull-right(action="/block", method="POST")
                       input(type="hidden", name="_csrf", value="#{csrfToken}")

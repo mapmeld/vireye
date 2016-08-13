@@ -5,17 +5,11 @@
 let following = (() => {
   var _ref = _asyncToGenerator(function* (fromUser, toUser, res) {
     if (fromUser && toUser) {
-      var f = yield Follow.findOne({ start_user_id: fromUser.name, end_user_id: toUser.name }).exec();
-      if (f) {
-        if (f.blocked) {
-          // block exists: show no user or image
-          noExist(res);
-        } else {
-          // positive follow exists, continue
-          return true;
-        }
+      var f = yield graphdb.query('MATCH (u:User { name: "' + fromUser.name + '" }) -[r:FOLLOWS]-> (v:User { name: "' + toUser.name + '" }) RETURN u, r, v').getResults();
+      console.log(f);
+      if (f.length) {
+        return true;
       } else {
-        // no follow exists, continue
         return false;
       }
     } else {
@@ -32,8 +26,10 @@ let following = (() => {
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
 
 const cloudinary = require('cloudinary');
-const Follow = require('./models/following.js');
 const ago = require('time-ago')().ago;
+const graphdb = require('neo4j-simple')(process.env['GRAPHENEDB_URL'], {
+  idName: 'id'
+});
 
 // respond with error
 function error(err, res) {
@@ -86,4 +82,3 @@ module.exports = {
   following: following,
   cleanDate: cleanDate
 };
-

@@ -1,15 +1,17 @@
 const cloudinary = require('cloudinary');
-const Follow = require('./models/following.js');
 const ago = require('time-ago')().ago;
+const graphdb = require('neo4j-simple')(process.env['GRAPHENEDB_URL'], {
+  idName: 'id'
+});
 
 // respond with error
-function error(err, res) {
-  res.body = { status: 'error', error: err };
+function error(ctx, err) {
+  ctx.body = { status: 'error', error: err };
 }
 
 // respond that the resource does not exist
-function noExist(res) {
-  res.body = { status: 'missing', error: 'can\'t find that user or image' };
+function noExist(ctx) {
+  ctx.body = { status: 'missing', error: 'can\'t find that user or image' };
 }
 
 // break an image into multiple sizes
@@ -42,17 +44,11 @@ function responsiveImg(img, isBig) {
 // multiple outcomes for follow-check
 async function following(fromUser, toUser, res) {
   if (fromUser && toUser) {
-    var f = await Follow.findOne({ start_user_id: fromUser.name, end_user_id: toUser.name }).exec();
-    if (f) {
-      if (f.blocked) {
-        // block exists: show no user or image
-        noExist(res);
-      } else {
-        // positive follow exists, continue
-        return true;
-      }
+    var f = await graphdb.query('MATCH (u:User { name: "' + fromUser.name + '" }) -[r:FOLLOWS]-> (v:User { name: "' + toUser.name + '" }) RETURN u, r, v').getResults();
+    console.log(f);
+    if (f.length) {
+      return true;
     } else {
-      // no follow exists, continue
       return false;
     }
   } else {
