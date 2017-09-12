@@ -1,5 +1,7 @@
 # VirEYE
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/mapmeld/vireye.svg)](https://greenkeeper.io/)
+
 Experimental research based on 1batch, MongoDB, and Neo4j.
 
 The VirEYE platform will allow researchers to share formal papers, data, methods,
